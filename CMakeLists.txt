@@ -17,8 +17,6 @@ add_definitions(-Wno-unknown-attributes -fvisibility=hidden -fPIC)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -pthread")
     set(RT_LIBRARY "rt")
-else()
-    message(FATAL_ERROR "Only linux builds are supported at this moment! Sorry")
 endif()
 
 # find python
