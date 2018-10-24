@@ -1,8 +1,7 @@
 #pragma once
 
-#include "_data.hpp"
-
 #include <Aeron.h>
+#include <pybind11/pybind11.h>
 
 #include <memory>
 #include <string>

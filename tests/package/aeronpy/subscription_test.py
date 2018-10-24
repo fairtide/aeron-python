@@ -14,9 +14,8 @@ def test_poll():
         def __init__(self):
             self.received = list()
 
-        def on_message(self, buffer, offset, length, header):
-            data = bytes(buffer)[offset:offset + length]
-            self.received.append(data)
+        def on_message(self, data):
+            self.received.append(bytes(data))
 
     handler = Handler()
     start = datetime.now()

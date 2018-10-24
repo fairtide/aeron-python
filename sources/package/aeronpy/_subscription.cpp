@@ -31,7 +31,14 @@ int subscription::poll(py::function handler, int fragment_limit)
             [&](const AtomicBuffer& buffer, util::index_t offset, util::index_t length, const Header& header)
             {
                 py::gil_scoped_acquire gil_guard;
-                handler(py::cast(buffer), offset, length, py::cast(header));
+
+                auto data_info = py::buffer_info(
+                        buffer.buffer() + offset,
+                        sizeof(uint8_t),
+                        py::format_descriptor<uint8_t>::format(),
+                        length);
+
+                handler(py::memoryview(data_info));
 
             }, fragment_limit);
 }
