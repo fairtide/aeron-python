@@ -1,0 +1,6 @@
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "external/aeron"]
+	path = external/aeron
+	url = https://github.com/real-logic/aeron.git
