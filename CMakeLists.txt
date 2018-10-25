@@ -19,6 +19,10 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(RT_LIBRARY "rt")
 endif()
 
+# find boost
+find_package(Boost COMPONENTS system REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 # find python
 find_package(PythonInterp ${PYTHON_VERSION})
 find_package(PythonLibs ${PYTHON_VERSION})

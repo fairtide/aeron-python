@@ -11,15 +11,15 @@ context::context(py::kwargs args)
 {
     static constexpr auto aeron_dir_key = "aeron_dir";
 
-    string aeron_dir;
+    aeron::Context aeron_context;
+
     if (args.contains(aeron_dir_key))
     {
-        aeron_dir = args[aeron_dir_key].cast<string>();
-        aeron_context_.aeronDir(aeron_dir);
+        auto aeron_dir = args[aeron_dir_key].cast<string>();
+        aeron_context.aeronDir(aeron_dir);
     }
 
-    aeron_instance_ = Aeron::connect(aeron_context_);
-
+    aeron_instance_ = Aeron::connect(aeron_context);
 }
 
 subscription context::add_subscription(const string& channel, int32_t stream_id)
