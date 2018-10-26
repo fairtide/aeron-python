@@ -38,6 +38,7 @@ public:
     publication add_publication(const std::string& channel, int32_t stream_id);
 
 private:
+    aeron::Context aeron_context_;
     std::shared_ptr<aeron::Aeron> aeron_instance_;
 
 };

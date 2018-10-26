@@ -22,7 +22,8 @@ foreach(module_file ${modules_SRC})
             ${AERON_ARCHIVE_CLIENT_LIBRARIES})
 
     add_dependencies(${name_without_extension}
-            aeron)
+            aeron
+            aeron-archive-client)
 
     list(APPEND modules ${name_without_extension})
 endforeach()
