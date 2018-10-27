@@ -7,7 +7,7 @@
 #include <string>
 
 
-class subscription
+class subscription final
 {
 public:
     subscription(std::shared_ptr<aeron::Subscription> aeron_subscription);
@@ -16,6 +16,8 @@ public:
     int64_t stream_id() const;
 
     int poll(pybind11::function handler, int fragment_limit);
+
+    int poll_eos();
 
     bool __bool__() const;
 
