@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_exclusive_publication.hpp"
 #include "_publication.hpp"
 #include "_subscription.hpp"
 
@@ -12,13 +13,15 @@
 
 
 /**
- * @brief Provides a helper for exposing Aeron context to python.
+ * @brief Provides a helper for exposing Aeron to python.
  */
 class context final
 {
 public:
     /**
-     * @brief
+     * @brief Creates a new instance of Aeron interop context.
+     * @details
+     * This constructor
      */
     explicit context(pybind11::kwargs args);
 
@@ -36,6 +39,13 @@ public:
      * @return
      */
     publication add_publication(const std::string& channel, int32_t stream_id);
+    /**
+     *
+     * @param channel
+     * @param stream_id
+     * @return
+     */
+    exclusive_publication add_exclusive_publication(const std::string& channel, int32_t stream_id);
 
 private:
     aeron::Context aeron_context_;

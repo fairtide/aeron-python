@@ -1,8 +1,13 @@
-//
-// Created by Lukasz Laszko on 28/10/2018.
-//
+#pragma once
 
-#ifndef AERON_PYTHON_DATA_HPP
-#define AERON_PYTHON_DATA_HPP
+#include <Aeron.h>
 
-#endif //AERON_PYTHON_DATA_HPP
+
+/**
+ * @brief Helper for interop with Aeron Image type.
+ */
+class image
+{
+public:
+
+};

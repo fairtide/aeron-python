@@ -1,5 +1,6 @@
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${PYBIND11_INCLUDE_DIRS})
+include_directories(${FMT_INCLUDE_DIRS})
 include_directories(${AERON_INCLUDE_DIRS})
 include_directories(${AERON_ARCHIVE_CLIENT_INCLUDE_DIRS})
 
@@ -18,10 +19,12 @@ foreach(module_file ${modules_SRC})
             ${SYSCALL_INTERCEPT_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT}
             ${RT_LIBRARY}
+            ${FMT_LIBRARIES}
             ${AERON_LIBRARIES}
             ${AERON_ARCHIVE_CLIENT_LIBRARIES})
 
     add_dependencies(${name_without_extension}
+            fmt
             aeron
             aeron-archive-client)
 

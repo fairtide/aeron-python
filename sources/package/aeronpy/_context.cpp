@@ -1,6 +1,8 @@
 #include "_context.hpp"
 
+#include <fmt/format.h>
 #include <pybind11/chrono.h>
+#include <pybind11/stl.h>
 
 #include <chrono>
 #include <string>
@@ -8,6 +10,7 @@
 using namespace std;
 using namespace std::chrono;
 using namespace aeron;
+using namespace fmt;
 namespace py = pybind11;
 
 
@@ -50,13 +53,101 @@ context::context(py::kwargs args)
     // callbacks
     if (args.contains(error_handler_key))
     {
-        auto handler = args[error_handler_key].cast<py::function>();
-        aeron_context_.errorHandler(handler);
+        auto handler = args[error_handler_key];
+        if (!py::isinstance<py::function>(handler))
+        {
+            auto reason = format("{} has to be a function!", error_handler_key);
+            throw py::type_error(reason);
+        }
+
+        aeron_context_.errorHandler([handler = handler.cast<py::function>()](auto& error)
+        {
+            py::gil_scoped_acquire gil_guard;
+            handler(error);
+        });
     }
     if (args.contains(new_publication_handler_key))
     {
-        auto handler = args[new_publication_handler_key].cast<py::function>();
-        aeron_context_.newPublicationHandler(handler);
+        auto handler = args[new_publication_handler_key];
+        if (!py::isinstance<py::function>(handler))
+        {
+            auto reason = format("{} has to be a function!", new_publication_handler_key);
+            throw py::type_error(reason);
+        }
+
+        aeron_context_.newPublicationHandler(
+                [handler = handler.cast<py::function>()](
+                        auto& channel, auto stream_id, auto session_id, auto correlation_id)
+                {
+                    py::gil_scoped_acquire gil_guard;
+                    handler(channel, stream_id, session_id, correlation_id);
+                });
+    }
+    if (args.contains(new_exclusive_publication_handler_key))
+    {
+        auto handler = args[new_exclusive_publication_handler_key];
+        if (!py::isinstance<py::function>(handler))
+        {
+            auto reason = format("{} has to be a function!", new_exclusive_publication_handler_key);
+            throw py::type_error(reason);
+        }
+
+        aeron_context_.newExclusivePublicationHandler(
+                [handler = handler.cast<py::function>()](
+                        auto& channel, auto stream_id, auto session_id, auto correlation_id)
+                {
+                    py::gil_scoped_acquire gil_guard;
+                    handler(channel, stream_id, session_id, correlation_id);
+                });
+    }
+    if (args.contains(new_subscription_handler_key))
+    {
+        auto handler = args[new_subscription_handler_key];
+        if (!py::isinstance<py::function>(handler))
+        {
+            auto reason = format("{} has to be a function!", new_subscription_handler_key);
+            throw py::type_error(reason);
+        }
+
+        aeron_context_.newSubscriptionHandler(
+                [handler = handler.cast<py::function>()](
+                        auto &channel, auto stream_id, auto correlation_id)
+                {
+                    py::gil_scoped_acquire gil_guard;
+                    handler(channel, stream_id, correlation_id);
+                });
+    }
+    if (args.contains(available_image_handler_key))
+    {
+        auto handler = args[available_image_handler_key];
+        if (!py::isinstance<py::function>(handler))
+        {
+            auto reason = format("{} has to be a function!", available_image_handler_key);
+            throw py::type_error(reason);
+        }
+
+        aeron_context_.availableImageHandler(
+                [handler = handler.cast<py::function>()](auto& image)
+                {
+                    py::gil_scoped_acquire gil_guard;
+                    handler(image);
+                });
+    }
+    if (args.contains(unavailable_image_handler_key))
+    {
+        auto handler = args[unavailable_image_handler_key];
+        if (!py::isinstance<py::function>(handler))
+        {
+            auto reason = format("{} has to be a function!", unavailable_image_handler_key);
+            throw py::type_error(reason);
+        }
+
+        aeron_context_.unavailableImageHandler(
+                [handler = handler.cast<py::function>()](auto& image)
+                {
+                    py::gil_scoped_acquire gil_guard;
+                    handler(image);
+                });
     }
 
     aeron_instance_ = Aeron::connect(aeron_context_);
@@ -92,6 +183,21 @@ publication context::add_publication(const string& channel, int32_t stream_id)
     return publication;
 }
 
+exclusive_publication context::add_exclusive_publication(const std::string &channel, int32_t stream_id)
+{
+    auto id = aeron_instance_->addExclusivePublication(channel, stream_id);
+    auto publication = aeron_instance_->findExclusivePublication(id);
+
+    // wait for the subscription to be valid
+    while (!publication)
+    {
+        std::this_thread::yield();
+        publication = aeron_instance_->findExclusivePublication(id);
+    }
+
+    return publication;
+}
+
 PYBIND11_MODULE(_context, m)
 {
     py::class_<context>(m, "Context")
@@ -105,7 +211,12 @@ PYBIND11_MODULE(_context, m)
                     py::arg("channel"),
                     py::arg("stream_id"),
                     py::call_guard<py::gil_scoped_release>(),
-                    py::keep_alive<0, 1>());
+                    py::keep_alive<0, 1>())
+            .def("add_exclusive_publication", &context::add_exclusive_publication,
+                 py::arg("channel"),
+                 py::arg("stream_id"),
+                 py::call_guard<py::gil_scoped_release>(),
+                 py::keep_alive<0, 1>());
 
 }
 

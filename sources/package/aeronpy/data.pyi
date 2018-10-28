@@ -1,0 +1,4 @@
+
+
+class Image:
+    pass
