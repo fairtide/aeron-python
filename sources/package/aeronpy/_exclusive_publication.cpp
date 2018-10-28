@@ -1,7 +1,10 @@
 #include "_exclusive_publication.hpp"
 
+#include <fmt/format.h>
+
 using namespace std;
 using namespace aeron;
+using namespace fmt;
 namespace py = pybind11;
 
 
@@ -30,6 +33,21 @@ int32_t exclusive_publication::session_id() const
 int32_t exclusive_publication::initial_term_id() const
 {
     return aeron_exclusive_publication_->initialTermId();
+}
+
+bool exclusive_publication::is_connected() const
+{
+    return aeron_exclusive_publication_->isConnected();
+}
+
+bool exclusive_publication::is_closed() const
+{
+    return aeron_exclusive_publication_->isClosed();
+}
+
+bool exclusive_publication::is_original() const
+{
+    return aeron_exclusive_publication_->isOriginal();
 }
 
 int64_t exclusive_publication::offer(py::object data)
@@ -65,15 +83,28 @@ bool exclusive_publication::__bool__() const
     return aeron_exclusive_publication_ && aeron_exclusive_publication_->isConnected();
 }
 
+string exclusive_publication::__str__() const
+{
+    return format("exclusive publication: hannel:[{}] stream_id:[{}] session_id:[{}]",
+            aeron_exclusive_publication_->channel(),
+            aeron_exclusive_publication_->streamId(),
+            aeron_exclusive_publication_->sessionId());
+}
+
 PYBIND11_MODULE(_exclusive_publication, m)
 {
     py::class_<exclusive_publication>(m, "ExclusivePublication")
             .def_property_readonly("channel", &exclusive_publication::channel)
             .def_property_readonly("stream_id", &exclusive_publication::stream_id)
+            .def_property_readonly("session_id", &exclusive_publication::session_id)
+            .def_property_readonly("is_connected", &exclusive_publication::is_connected)
+            .def_property_readonly("is_closed", &exclusive_publication::is_closed)
+            .def_property_readonly("is_original", &exclusive_publication::is_original)
             .def("offer", &exclusive_publication::offer,
                  py::arg("data"))
             .def("close", &exclusive_publication::close)
-            .def("__bool__", &exclusive_publication::__bool__);
+            .def("__bool__", &exclusive_publication::__bool__)
+            .def("__str__", &exclusive_publication::__str__);
 
 }
 

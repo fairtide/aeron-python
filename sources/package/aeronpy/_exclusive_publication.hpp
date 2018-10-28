@@ -31,6 +31,21 @@ public:
      * @return
      */
     int32_t initial_term_id() const;
+    /**
+     * @brief
+     * @return
+     */
+    bool is_connected() const;
+    /**
+     * @brief
+     * @return
+     */
+    bool is_closed() const;
+    /**
+     * @brief
+     * @return
+     */
+    bool is_original() const;
 
     /**
      * Offers a data block to open stream this publisher is for.
@@ -42,6 +57,8 @@ public:
     void close();
 
     bool __bool__() const;
+
+    std::string __str__() const;
 
 private:
     std::shared_ptr<aeron::ExclusivePublication> aeron_exclusive_publication_;

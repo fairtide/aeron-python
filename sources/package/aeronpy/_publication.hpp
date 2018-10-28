@@ -27,15 +27,30 @@ public:
      */
     int64_t stream_id() const;
     /**
-     *
+     * @brief
      * @return
      */
     int32_t session_id() const;
     /**
-     *
+     * @brief
      * @return
      */
     int32_t initial_term_id() const;
+    /**
+     * @brief
+     * @return
+     */
+    bool is_connected() const;
+    /**
+     * @brief
+     * @return
+     */
+    bool is_closed() const;
+    /**
+     * @brief
+     * @return
+     */
+    bool is_original() const;
 
     /**
      * Offers a data block to open stream this publisher is for.
@@ -47,10 +62,15 @@ public:
     void close();
 
     /**
-     * Checks state of the publisher.
+     * @brief Checks state of the publisher.
      * @return True if publisher is connected and is ready to offer data.
      */
     bool __bool__() const;
+    /**
+     * @brief Provides debug description of publication.
+     * @return Debug description of publication.
+     */
+    std::string __str__() const;
 
 private:
     std::shared_ptr<aeron::Publication> aeron_publication_;
