@@ -12,7 +12,15 @@ class subscription final
 public:
     subscription(std::shared_ptr<aeron::Subscription> aeron_subscription);
 
+    /**
+     *
+     * @return
+     */
     const std::string& channel() const;
+    /**
+     *
+     * @return
+     */
     int64_t stream_id() const;
 
     int poll(pybind11::function handler, int fragment_limit);

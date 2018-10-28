@@ -7,3 +7,6 @@
 [submodule "external/aeron-archive-client"]
 	path = external/aeron-archive-client
 	url = https://github.com/fairtide/aeron-archive-client.git
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt.git

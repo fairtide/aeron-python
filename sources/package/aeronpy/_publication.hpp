@@ -26,6 +26,13 @@ public:
      * @return
      */
     int64_t stream_id() const;
+    /**
+     *
+     * @return
+     */
+    int32_t session_id() const;
+
+    int32_t initial_term_id() const;
 
     int64_t offer(pybind11::object data);
 

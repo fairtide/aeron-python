@@ -25,6 +25,16 @@ int64_t publication::stream_id() const
     return aeron_publication_->streamId();
 }
 
+int32_t publication::session_id() const
+{
+    return aeron_publication_->sessionId();
+}
+
+int32_t publication::initial_term_id() const
+{
+    return aeron_publication_->initialTermId();
+}
+
 int64_t publication::offer(py::object data)
 {
     if (py::isinstance<py::buffer>(data))

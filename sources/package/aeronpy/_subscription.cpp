@@ -28,7 +28,7 @@ int64_t subscription::stream_id() const
 int subscription::poll(py::function handler, int fragment_limit)
 {
     return aeron_subscription_->poll(
-            [&](const AtomicBuffer& buffer, util::index_t offset, util::index_t length, const Header& header)
+            [&](auto& buffer, auto offset, auto length, auto& header)
             {
                 py::gil_scoped_acquire gil_guard;
 
