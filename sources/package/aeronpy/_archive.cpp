@@ -69,12 +69,14 @@ int64_t archive::find_latest_recording_id(const string& channel, int32_t streamI
 
 PYBIND11_MODULE(_archive, m)
 {
+    static constexpr auto default_position = 0;
+
     py::class_<archive>(m, "Archive")
             .def(py::init<const string&, int32_t, py::kwargs>())
             .def("replay", &archive::replay,
                     py::arg("channel"),
                     py::arg("stream_id"),
-                    py::arg("position") = 0,
+                    py::arg("position") = default_position,
                     py::call_guard<py::gil_scoped_release>(),
                     py::keep_alive<0, 1>());
 }
