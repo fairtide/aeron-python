@@ -8,7 +8,7 @@
 /**
  * @brief Helper for interop with Aeron Image type.
  */
-class image
+class image final
 {
 public:
     /**
@@ -39,5 +39,32 @@ public:
      * @return
      */
     static std::string __str__(aeron::Image& self);
+
+};
+
+/**
+ * @brief A helper for interop with Aeron Header type.
+ */
+class header final
+{
+public:
+    /**
+     * @brief
+     * @param self
+     * @return
+     */
+    static int32_t stream_id(aeron::Header& self);
+    /**
+     * @brief
+     * @return
+     */
+    static int32_t session_id(aeron::Header& self);
+
+    /**
+     * @brief
+     * @param self
+     * @return
+     */
+    static std::string __str__(aeron::Header& self);
 
 };

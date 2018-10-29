@@ -1,7 +1,20 @@
+from typing import NoReturn
 
 
 class Image:
-    pass
+    session_id = ... # type: int
+
+    is_end_of_stream = ... # type: bool
+    is_closed = ... # type: bool
+
+    def close(self) -> NoReturn: ...
+
+
+class Header:
+    stream_id = ... # type: int
+    session_id = ... # type: int
+
+    def __str__(self) -> str: ...
 
 
 NOT_CONNECTED = ... # type: int

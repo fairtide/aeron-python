@@ -38,15 +38,16 @@ bool subscription::is_closed() const
     return aeron_subscription_->isClosed();
 }
 
-shared_ptr<vector<Image>> subscription::images() const
+vector<Image> subscription::images() const
 {
-    return aeron_subscription_->images();
+
+    return *aeron_subscription_->images();
 }
 
 int subscription::poll(py::function handler, int fragment_limit)
 {
     return aeron_subscription_->poll(
-            [&](auto& buffer, auto offset, auto length, auto& header)
+            [&, this](auto& buffer, auto offset, auto length, auto& header)
             {
                 py::gil_scoped_acquire gil_guard;
 
@@ -56,14 +57,23 @@ int subscription::poll(py::function handler, int fragment_limit)
                         py::format_descriptor<uint8_t>::format(),
                         length);
 
-                handler(py::memoryview(data_info));
-
-            }, fragment_limit);
+                if (is_complete_poll_handler(handler)) // expected performance hit
+                    handler(py::memoryview(data_info), header);
+                else
+                    handler(py::memoryview(data_info));
+            },
+            fragment_limit);
 }
 
-int subscription::poll_eos()
+int subscription::poll_eos(py::object handler)
 {
-    return aeron_subscription_->pollEndOfStreams([](auto& image) { });
+    return aeron_subscription_->pollEndOfStreams([&](auto& image)
+    {
+        py::gil_scoped_acquire gil_guard;
+
+        if (handler)
+            handler(image);
+    });
 }
 
 bool subscription::__bool__() const
@@ -76,6 +86,19 @@ string subscription::__str__() const
     return format("subscription: channel:[{}] stream:[{}]",
             aeron_subscription_->channel(),
             aeron_subscription_->streamId());
+}
+
+bool subscription::is_complete_poll_handler(py::function& handler)
+{
+    static constexpr auto inspect_module = "inspect";
+    static constexpr auto signature_attribute = "signature";
+    static constexpr auto parameters_attribute = "parameters";
+
+    auto inspect = py::module::import(inspect_module);
+    auto signature_func = inspect.attr(signature_attribute);
+    auto signature = signature_func(handler);
+
+    return py::len(signature.attr(parameters_attribute)) > 1u;
 }
 
 PYBIND11_MODULE(_subscription, m)
@@ -93,6 +116,7 @@ PYBIND11_MODULE(_subscription, m)
                     py::arg("fragment_limit") = default_fragment_limit,
                     py::call_guard<py::gil_scoped_release>())
             .def("poll_eos", &subscription::poll_eos,
+                    py::arg("handler") = py::none(),
                     py::call_guard<py::gil_scoped_release>())
             .def("__bool__", &subscription::__bool__)
             .def("__str__", &subscription::__str__);

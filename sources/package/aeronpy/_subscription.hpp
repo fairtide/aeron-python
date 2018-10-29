@@ -38,7 +38,7 @@ public:
      *
      * @return
      */
-    std::shared_ptr<std::vector<aeron::Image>> images() const;
+    std::vector<aeron::Image> images() const;
 
     /**
      *
@@ -51,7 +51,7 @@ public:
      *
      * @return
      */
-    int poll_eos();
+    int poll_eos(pybind11::object handler);
 
     /**
      *
@@ -65,6 +65,8 @@ public:
     std::string __str__() const;
 
 private:
+    bool is_complete_poll_handler(pybind11::function& handler);
+
     std::shared_ptr<aeron::Subscription> aeron_subscription_;
 
 };
