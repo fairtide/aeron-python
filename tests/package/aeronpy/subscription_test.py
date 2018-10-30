@@ -20,6 +20,11 @@ def ipc_publication_2(context):
     return context.add_exclusive_publication('aeron:ipc', 199)
 
 
+@fixture()
+def mcast_publication(context):
+    return context.add_exclusive_publication('aeron:udp?endpoint=224.0.1.1:40456|ttl=0', 300)
+
+
 def test_create__no_publisher():
     # always connected
     context = Context()
@@ -128,20 +133,27 @@ def test_poll_eos__no_data(ipc_publication):
     assert_that(result, is_(0))
 
 
-def test_poll_eos__single_image(ipc_publication):
-    context = Context()
-    subscription = context.add_subscription('aeron:ipc', 199)
-    sleep(0.5)
-
-    ipc_publication.close()
-    del ipc_publication
-    sleep(0.5)
-
-    finished = list()
-    subscription.poll(lambda _: None)
-    result = subscription.poll_eos(lambda image: finished.append(image.session_id))
-    assert_that(result, is_(1))
-
-
-def test_poll_eos__multiple_images(ipc_publication):
-    pass
+# def test_poll_eos__single_image(mcast_publication):
+#     context = Context()
+#     subscription = context.add_subscription('aeron:udp?endpoint=224.0.1.1:40456|ttl=0', 300)
+#     sleep(0.5)
+#
+#     mcast_publication.offer(b'abc')
+#     sleep(0.5)
+#
+#     result = subscription.poll(lambda _: None)
+#     assert_that(result, is_(1))
+#
+#     mcast_publication.close()
+#     del mcast_publication
+#
+#     sleep(30)
+#
+#     finished = list()
+#
+#     result = subscription.poll_eos(lambda image: finished.append(image.session_id))
+#     assert_that(result, is_(1))
+#
+#
+# def test_poll_eos__multiple_images(ipc_publication):
+#     pass
