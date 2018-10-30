@@ -7,7 +7,10 @@
 #include <string>
 
 
-class publication
+/**
+ * @brief
+ */
+class publication final
 {
 public:
     /**

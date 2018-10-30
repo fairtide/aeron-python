@@ -6,9 +6,16 @@
 #include <memory>
 
 
-class exclusive_publication
+/**
+ * @brief
+ */
+class exclusive_publication final
 {
 public:
+    /**
+     * @brief
+     * @param aeron_exclusive_publication
+     */
     exclusive_publication(std::shared_ptr<aeron::ExclusivePublication> aeron_exclusive_publication);
 
     /**
@@ -54,10 +61,20 @@ public:
      */
     int64_t offer(pybind11::object data);
 
+    /**
+     * @brief
+     */
     void close();
 
+    /**
+     * @brief
+     * @return
+     */
     bool __bool__() const;
-
+    /**
+     * @brief
+     * @return
+     */
     std::string __str__() const;
 
 private:

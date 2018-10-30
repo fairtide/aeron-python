@@ -12,30 +12,30 @@ class image final
 {
 public:
     /**
-     *
+     * @brief
      * @param self
      * @return
      */
     static int32_t session_id(aeron::Image& self);
     /**
-     *
+     * @brief
      * @param self
      * @return
      */
     static bool is_end_of_stream(aeron::Image& self);
     /**
-     *
+     * @brief
      * @param self
      * @return
      */
     static bool is_closed(aeron::Image& self);
     /**
-     *
+     * @brief
      */
     static void close(aeron::Image& self);
 
     /**
-     *
+     * @brief
      * @return
      */
     static std::string __str__(aeron::Image& self);
