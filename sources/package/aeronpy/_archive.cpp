@@ -44,17 +44,24 @@ int64_t archive::find_latest_recording_id(const string& channel, int32_t streamI
 {
     std::int64_t lastRecordingId{-1};
 
-    auto consumer = [&](long controlSessionId, long correlationId, long recordingId, long startTimestamp,
-                        long stopTimestamp, long startPosition, long stopPosition, int initialTermId,
-                        int segmentFileLength, int termBufferLength, int mtuLength, int sessionId, int streamId,
-                        const std::string& strippedChannel, const std::string& originalChannel,
-                        const std::string& sourceIdentity) {
-        std::cout << "recId: " << recordingId << ", ts: [" << startTimestamp << ", " << stopTimestamp
-                  << "], pos: [" << startPosition << ", " << stopPosition
-                  << "], initialTermId: " << initialTermId << ", sessionId: " << sessionId << ", streamId: " << streamId
-                  << ", strippedChannel: " << strippedChannel << ", originalChannel: " << originalChannel
-                  << ", sourceIdentity: " << sourceIdentity << '\n';
-
+    auto consumer = [&](
+            long controlSessionId,
+            long correlationId,
+            long recordingId,
+            long startTimestamp,
+            long stopTimestamp,
+            long startPosition,
+            long stopPosition,
+            int initialTermId,
+            int segmentFileLength,
+            int termBufferLength,
+            int mtuLength,
+            int sessionId,
+            int streamId,
+            const string& strippedChannel,
+            const string& originalChannel,
+            const string& sourceIdentity)
+    {
         lastRecordingId = recordingId;
     };
 
