@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 
 #include <chrono>
+#include <cstdlib>
 #include <string>
 
 using namespace std;
@@ -28,10 +29,13 @@ context::context(py::kwargs args)
     static constexpr auto available_image_handler_key = "available_image_handler";
     static constexpr auto unavailable_image_handler_key = "unavailable_image_handler";
 
-    static constexpr auto default_aeron_dir = "/tmp/aeron_shm";
+    static constexpr auto default_aeron_dir_var = "AERON_DIR";
+
+    // defaults from environment variables
+    if(auto default_aeron_dir = getenv(default_aeron_dir_var))
+        aeron_context_.aeronDir(default_aeron_dir);
 
     // context properties
-    aeron_context_.aeronDir(default_aeron_dir);
     if (args.contains(aeron_dir_key))
     {
         auto aeron_dir = args[aeron_dir_key].cast<string>();
