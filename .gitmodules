@@ -6,7 +6,8 @@
 	url = https://github.com/real-logic/aeron.git
 [submodule "external/aeron-archive-client"]
 	path = external/aeron-archive-client
-	url = https://github.com/fairtide/aeron-archive-client.git
+	url = ssh://git@192.168.1.63:7999/oss/aeron-archive-client.git
+	branch = develop
 [submodule "external/fmt"]
 	path = external/fmt
 	url = https://github.com/fmtlib/fmt.git
