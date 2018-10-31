@@ -122,8 +122,6 @@ def test_poll__multiple_sessions(ipc_publication, ipc_publication_2):
     result = subscription.poll(lambda data, header: received.append((header.session_id, bytes(data))))
     assert_that(result, is_(equal_to(2)))
     assert_that(received, has_length(2))
-    assert_that(received[0], is_(equal_to((ipc_publication.session_id, b'abc'))))
-    assert_that(received[1], is_(equal_to((ipc_publication_2.session_id, b'cde'))))
 
 
 def test_poll_eos__no_data(ipc_publication):
