@@ -28,7 +28,10 @@ context::context(py::kwargs args)
     static constexpr auto available_image_handler_key = "available_image_handler";
     static constexpr auto unavailable_image_handler_key = "unavailable_image_handler";
 
+    static constexpr auto default_aeron_dir = "/tmp/aeron_shm";
+
     // context properties
+    aeron_context_.aeronDir(default_aeron_dir);
     if (args.contains(aeron_dir_key))
     {
         auto aeron_dir = args[aeron_dir_key].cast<string>();
