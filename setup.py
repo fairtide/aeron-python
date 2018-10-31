@@ -52,6 +52,11 @@ class CMakeBuild(build_ext):
         env = os.environ.copy()
         env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get('CXXFLAGS', ''),
                                                               self.distribution.get_version())
+        if 'CC' in env:
+            cmake_args += ['-DCMAKE_C_COMPILER=' + env['CC']]
+        if 'CXX' in env:
+            cmake_args += ['-DCMAKE_CXX_COMPILER=' + env['CXX']]
+
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
