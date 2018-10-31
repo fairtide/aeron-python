@@ -16,7 +16,7 @@ ExternalProject_Add(fmt
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --target fmt
         INSTALL_COMMAND ""
         BUILD_BYPRODUCTS
-        "${CMAKE_CURRENT_BINARY_DIR}/fmt-prefix/src/fmt-build/libfmt.a")
+        "${CMAKE_CURRENT_BINARY_DIR}/fmt-prefix/src/fmt-build/libfmtd.a")
 
 ExternalProject_Get_Property(fmt SOURCE_DIR)
 set(FMT_INCLUDE_DIRS ${SOURCE_DIR}/include PARENT_SCOPE)
