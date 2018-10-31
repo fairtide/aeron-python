@@ -3,6 +3,8 @@
 #include <ChannelUri.h>
 #include <Configuration.h>
 
+#include <cstdlib>
+
 using namespace std;
 namespace py = pybind11;
 
@@ -41,7 +43,11 @@ subscription archive::replay(const string& channel, int32_t stream_id, int64_t p
 archive::archive(pybind11::kwargs& args) 
 {
     static constexpr auto config_file_key = "config_file";
+    static constexpr auto aeron_dir_key = "aeron_dir";
 
+    static constexpr auto default_aeron_dir_var = "AERON_DIR";
+
+    // aeron archive context initialisation
     unique_ptr<aeron::archive::Context> aeron_archive_context;
     if (args.contains(config_file_key))
     {
@@ -53,6 +59,17 @@ archive::archive(pybind11::kwargs& args)
     else
     {
         aeron_archive_context = make_unique<aeron::archive::Context>();
+    }
+
+    // defaults from environment variables
+    if(auto default_aeron_dir = getenv(default_aeron_dir_var))
+        aeron_archive_context->aeronDirectoryName(default_aeron_dir);
+
+    // context properties
+    if (args.contains(aeron_dir_key))
+    {
+        auto aeron_dir = args[aeron_dir_key].cast<string>();
+        aeron_archive_context->aeronDirectoryName(aeron_dir);
     }
 
     aeron_archive_ = aeron::archive::AeronArchive::connect(*aeron_archive_context);
