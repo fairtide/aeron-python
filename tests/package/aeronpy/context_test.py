@@ -24,10 +24,10 @@ def test_create__wrong_parameter_type():
 
 def test_add_subscription():
     context = Context()
-    subscription = context.add_subscription('aeron:ipc', 1)
+    subscription = context.add_subscription('aeron:ipc', 1000)
     assert_that(subscription, is_not(None))
     assert_that(subscription.channel, is_('aeron:ipc'))
-    assert_that(subscription.stream_id, is_(1))
+    assert_that(subscription.stream_id, is_(1000))
 
 
 def test_add_subscription__with_handlers():
@@ -50,10 +50,10 @@ def test_add_subscription__with_handlers():
 
 def test_add_publication():
     context = Context()
-    publication = context.add_publication('aeron:ipc', 1)
+    publication = context.add_publication('aeron:ipc', 2000)
     assert_that(publication, is_not(None))
     assert_that(publication.channel, is_('aeron:ipc'))
-    assert_that(publication.stream_id, is_(1))
+    assert_that(publication.stream_id, is_(2000))
 
 
 def test_add_publication__wrong_channel():
@@ -71,20 +71,20 @@ def test_add_publication__with_handler():
 
     handler = Handler()
     context = Context(new_publication_handler=handler.on_new_publication)
-    publication = context.add_publication('aeron:ipc', 1)
+    publication = context.add_publication('aeron:ipc', 3000)
 
     assert_that(handler.publications, is_not(empty()))
     assert_that(handler.publications, has_length(equal_to(1)))
     assert_that(handler.publications[0][0], is_(equal_to('aeron:ipc')))
-    assert_that(handler.publications[0][1], is_(equal_to(1)))
+    assert_that(handler.publications[0][1], is_(equal_to(3000)))
 
 
 def test_add_exclusive_publication():
     context = Context()
-    publication = context.add_exclusive_publication('aeron:ipc', 1)
+    publication = context.add_exclusive_publication('aeron:ipc', 4000)
     assert_that(publication, is_not(None))
     assert_that(publication.channel, is_('aeron:ipc'))
-    assert_that(publication.stream_id, is_(1))
+    assert_that(publication.stream_id, is_(4000))
 
 
 def test_add_exclusive_publication__with_handler():
@@ -97,12 +97,12 @@ def test_add_exclusive_publication__with_handler():
 
     handler = Handler()
     context = Context(new_exclusive_publication_handler=handler.on_new_exclusive_publication)
-    publication = context.add_exclusive_publication('aeron:ipc', 1)
+    publication = context.add_exclusive_publication('aeron:ipc', 5000)
 
     assert_that(handler.publications, is_not(empty()))
-    assert_that(handler.publications, has_length(equal_to(1)))
+    assert_that(handler.publications, has_length(equal_to(5000)))
     assert_that(handler.publications[0][0], is_(equal_to('aeron:ipc')))
-    assert_that(handler.publications[0][1], is_(equal_to(1)))
+    assert_that(handler.publications[0][1], is_(equal_to(5000)))
 
 
 def test_image_available_unavailable_callbacks():
@@ -120,10 +120,10 @@ def test_image_available_unavailable_callbacks():
     handler = Handler()
     context = Context(available_image_handler=handler.on_image_available,
                       unavailable_image_handler=handler.on_image_unavailable)
-    subscription = context.add_subscription('aeron:ipc', 1)
+    subscription = context.add_subscription('aeron:ipc', 6000)
 
     publication_context = Context()
-    publication = publication_context.add_publication('aeron:ipc', 1)
+    publication = publication_context.add_publication('aeron:ipc', 6000)
     sleep(1)
 
     publication.close()

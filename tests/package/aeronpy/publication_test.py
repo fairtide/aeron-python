@@ -70,10 +70,13 @@ def test_offer__multicast(mcast_subscriber):
     assert_that(result, is_(greater_than_or_equal_to(0)))
 
 
-def test_offer__multiple_publishers__same_stream(ipc_subscriber):
+def test_offer__multiple_publishers__same_stream():
+    subscriber_context = Context()
+    ipc_subscriber = subscriber_context.add_subscription('aeron:ipc', 75)
+
     context = Context()
-    publication_1 = context.add_publication('aeron:ipc', 50)
-    publication_2 = context.add_publication('aeron:ipc', 50)
+    publication_1 = context.add_publication('aeron:ipc', 75)
+    publication_2 = context.add_publication('aeron:ipc', 75)
     assert_that(publication_1.session_id, is_(equal_to(publication_2.session_id)))
 
     result = publication_1.offer(b'abc')
