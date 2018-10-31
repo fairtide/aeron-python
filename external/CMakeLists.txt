@@ -5,7 +5,7 @@ set(PYBIND11_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include PARENT_SC
 ExternalProject_Add(fmt
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/fmt
         CMAKE_ARGS
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
@@ -16,20 +16,20 @@ ExternalProject_Add(fmt
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --target fmt
         INSTALL_COMMAND ""
         BUILD_BYPRODUCTS
-        "${CMAKE_CURRENT_BINARY_DIR}/fmt-prefix/src/fmt-build/libfmtd.a")
+        "${CMAKE_CURRENT_BINARY_DIR}/fmt-prefix/src/fmt-build/libfmt.a")
 
 ExternalProject_Get_Property(fmt SOURCE_DIR)
 set(FMT_INCLUDE_DIRS ${SOURCE_DIR}/include PARENT_SCOPE)
 
 ExternalProject_Get_Property(fmt BINARY_DIR)
 message(STATUS ${BINARY_DIR})
-set(FMT_LIBRARIES ${BINARY_DIR}/libfmtd.a PARENT_SCOPE)
+set(FMT_LIBRARIES ${BINARY_DIR}/libfmt.a PARENT_SCOPE)
 
 # aeron
 ExternalProject_Add(aeron
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/aeron
         CMAKE_ARGS
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
@@ -52,7 +52,7 @@ set(AERON_LIBRARIES "${BINARY_DIR}/lib/libaeron_client.a" PARENT_SCOPE)
 ExternalProject_Add(aeron-archive-client
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/aeron-archive-client
         CMAKE_ARGS
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
