@@ -13,7 +13,7 @@ ExternalProject_Add(fmt
         -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
         -DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-        BUILD_COMMAND ${CMAKE_COMMAND} --build .
+        BUILD_COMMAND ${CMAKE_COMMAND} --build . --target fmt
         INSTALL_COMMAND ""
         BUILD_BYPRODUCTS
         "${CMAKE_CURRENT_BINARY_DIR}/fmt-prefix/src/fmt-build/libfmt.a")
@@ -22,7 +22,8 @@ ExternalProject_Get_Property(fmt SOURCE_DIR)
 set(FMT_INCLUDE_DIRS ${SOURCE_DIR}/include PARENT_SCOPE)
 
 ExternalProject_Get_Property(fmt BINARY_DIR)
-set(FMT_LIBRARIES "${BINARY_DIR}/libfmt.a" PARENT_SCOPE)
+message(STATUS ${BINARY_DIR})
+set(FMT_LIBRARIES ${BINARY_DIR}/libfmtd.a PARENT_SCOPE)
 
 # aeron
 ExternalProject_Add(aeron
@@ -36,7 +37,7 @@ ExternalProject_Add(aeron
         -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
         -DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-        BUILD_COMMAND ${CMAKE_COMMAND} --build .
+        BUILD_COMMAND ${CMAKE_COMMAND} --build . --target aeron_client
         INSTALL_COMMAND ""
         BUILD_BYPRODUCTS
         "${CMAKE_CURRENT_BINARY_DIR}/aeron-prefix/src/aeron-build/lib/libaeron_client.a")
