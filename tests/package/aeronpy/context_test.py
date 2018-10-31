@@ -100,7 +100,7 @@ def test_add_exclusive_publication__with_handler():
     publication = context.add_exclusive_publication('aeron:ipc', 5000)
 
     assert_that(handler.publications, is_not(empty()))
-    assert_that(handler.publications, has_length(equal_to(5000)))
+    assert_that(handler.publications, has_length(equal_to(1)))
     assert_that(handler.publications[0][0], is_(equal_to('aeron:ipc')))
     assert_that(handler.publications[0][1], is_(equal_to(5000)))
 
