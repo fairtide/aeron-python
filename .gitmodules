@@ -1,0 +1,13 @@
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "external/aeron"]
+	path = external/aeron
+	url = https://github.com/real-logic/aeron.git
+[submodule "external/aeron-archive-client"]
+	path = external/aeron-archive-client
+	url = ssh://git@192.168.1.63:7999/oss/aeron-archive-client.git
+	branch = develop
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt.git
