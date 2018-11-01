@@ -33,7 +33,7 @@ subscription archive::replay(const string& channel, int32_t stream_id, int64_t p
     auto subscription = aeron_archive_->replay(
             recording_id_,
             position_id,
-            std::numeric_limits<std::int64_t>::max(),
+            numeric_limits<std::int64_t>::max(),
             channel,
             stream_id);
 
@@ -100,12 +100,12 @@ int64_t archive::find_latest_recording_id(const string& channel, int32_t streamI
         lastRecordingId = recordingId;
     };
 
-    std::int32_t foundCount = aeron_archive_->listRecordingsForUri(0, 100, channel, streamId, consumer);
-
-    if (foundCount) {
-        std::cout << "found " << foundCount << ", last recording id = " << lastRecordingId << '\n';
-    }
-
+    std::int32_t foundCount = aeron_archive_->listRecordingsForUri(
+            0,
+            numeric_limits<std::int32_t>::max(),
+            channel,
+            streamId,
+            consumer);
     return lastRecordingId;
 }
 
