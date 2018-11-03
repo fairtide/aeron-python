@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import multiprocessing
 import platform
 import subprocess
 
@@ -17,8 +18,11 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def run(self):
+        env = os.environ.copy()
+        cmake = env['CMAKE'] if 'CMAKE' in env else 'cmake'
+
         try:
-            out = subprocess.check_output(['cmake', '--version'])
+            out = subprocess.check_output([cmake, '--version'])
         except OSError:
             raise RuntimeError("CMake must be installed to build the following extensions: " +
                                ", ".join(e.name for e in self.extensions))
@@ -30,7 +34,6 @@ class CMakeBuild(build_ext):
 
         for ext in self.extensions:
             self.build_extension(ext)
-
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
@@ -47,11 +50,12 @@ class CMakeBuild(build_ext):
             build_args += ['--', '/m']
         else:
             cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
-            build_args += ['--', '-j2']
+            build_args += ['--', '-j', str(multiprocessing.cpu_count())]
 
         env = os.environ.copy()
         env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get('CXXFLAGS', ''),
                                                               self.distribution.get_version())
+
         if 'CC' in env:
             cmake_args += ['-DCMAKE_C_COMPILER=' + env['CC']]
         if 'CXX' in env:
@@ -59,8 +63,10 @@ class CMakeBuild(build_ext):
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
+
+        cmake = env['CMAKE'] if 'CMAKE' in env else 'cmake'
+        subprocess.check_call([cmake, ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
+        subprocess.check_call([cmake, '--build', '.'] + build_args, cwd=self.build_temp)
 
         packagedir = os.path.join(ext.sourcedir, 'sources/package')
         self.distribution.packages = find_packages(packagedir)
