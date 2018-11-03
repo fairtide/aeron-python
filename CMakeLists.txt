@@ -61,3 +61,8 @@ add_custom_target(build-package
                 PKG-INFO
         COMMAND gzip ${CMAKE_BINARY_DIR}/aeron_python.tar
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+
+add_custom_target(build-wheel
+        COMMAND ${PYTHON_EXECUTABLE} setup.py bdist_wheel -d ${CMAKE_BINARY_DIR}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
