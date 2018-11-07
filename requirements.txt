@@ -1,5 +1,7 @@
 pytest==3.8.2
 PyHamcrest==1.9.0
+Cython==0.29
+aeron-python-driver==1.11.2
 twine
 wheel
 
