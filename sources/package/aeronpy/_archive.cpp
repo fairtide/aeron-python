@@ -60,6 +60,16 @@ archive::archive(pybind11::kwargs& args)
 {
     static constexpr auto config_file_key = "config_file";
     static constexpr auto aeron_dir_key = "aeron_dir";
+    static constexpr auto message_timeout_ns_key = "message_timeout_ns";
+    static constexpr auto control_request_channel_key = "control_request_channel";
+    static constexpr auto control_request_stream_id_key = "control_request_stream_id";
+    static constexpr auto control_response_channel_key = "control_response_channel";
+    static constexpr auto control_response_stream_id_key = "control_response_stream_id";
+    static constexpr auto recording_events_channel_key = "recording_events_channel";
+    static constexpr auto recording_events_stream_id_key = "recording_events_stream_id";
+    static constexpr auto control_term_buffer_sparse_key = "control_term_buffer_sparse";
+    static constexpr auto control_term_buffer_length_key = "control_term_buffer_length";
+    static constexpr auto control_mtu_length_key = "control_mtu_length";
 
     static constexpr auto default_aeron_dir_var = "AERON_DIR";
 
@@ -86,6 +96,56 @@ archive::archive(pybind11::kwargs& args)
     {
         auto aeron_dir = args[aeron_dir_key].cast<string>();
         aeron_archive_context->aeronDirectoryName(aeron_dir);
+    }
+    if (args.contains(message_timeout_ns_key))
+    {
+        auto message_timeout_ns = args[message_timeout_ns_key].cast<int64_t>();
+        aeron_archive_context->messageTimeoutNs(message_timeout_ns);
+    }
+    if (args.contains(control_request_channel_key))
+    {
+        auto control_request_channel = args[control_request_channel_key].cast<string>();
+        aeron_archive_context->controlRequestChannel(control_request_channel);
+    }
+    if (args.contains(control_request_stream_id_key))
+    {
+        auto control_request_stream_id = args[control_request_stream_id_key].cast<int32_t>();
+        aeron_archive_context->controlRequestStreamId(control_request_stream_id);
+    }
+    if (args.contains(control_response_channel_key))
+    {
+        auto control_response_channel = args[control_response_channel_key].cast<string>();
+        aeron_archive_context->controlResponseChannel(control_response_channel);
+    }
+    if (args.contains(control_response_stream_id_key))
+    {
+        auto control_response_stream_id = args[control_response_stream_id_key].cast<int32_t>();
+        aeron_archive_context->controlResponseStreamId(control_response_stream_id);
+    }
+    if (args.contains(recording_events_channel_key))
+    {
+        auto recording_events_channel = args[recording_events_channel_key].cast<string>();
+        aeron_archive_context->recordingEventsChannel(recording_events_channel);
+    }
+    if (args.contains(recording_events_stream_id_key))
+    {
+        auto recording_events_stream_id = args[recording_events_stream_id_key].cast<int32_t>();
+        aeron_archive_context->recordingEventsStreamId(recording_events_stream_id);
+    }
+    if (args.contains(control_term_buffer_sparse_key))
+    {
+        auto control_term_buffer_sparse = args[control_term_buffer_sparse_key].cast<bool>();
+        aeron_archive_context->controlTermBufferSparse(control_term_buffer_sparse_key);
+    }
+    if (args.contains(control_term_buffer_length_key))
+    {
+        auto control_term_buffer_length = args[control_term_buffer_length_key].cast<int32_t>();
+        aeron_archive_context->controlTermBufferLength(control_term_buffer_length);
+    }
+    if (args.contains(control_mtu_length_key))
+    {
+        auto control_mtu_length = args[control_mtu_length_key].cast<int32_t>();
+        aeron_archive_context->controlMtuLength(control_mtu_length);
     }
 
     aeron_archive_ = aeron::archive::AeronArchive::connect(*aeron_archive_context);

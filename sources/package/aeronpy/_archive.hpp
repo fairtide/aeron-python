@@ -28,21 +28,23 @@
 
 /**
  * @brief Provides an interop proxy for interaction with Aeron archive.
+ * @details
+ * The aeron-archive is an service which enables Aeron data stream recording and replay support from an archive.
  */
 class archive final
 {
 public:
     /**
-     * @brief Creates an instance of **archive** for the .
+     * @brief Creates an instance of an **archive** for the given channel and stream.
      * @param channel Channel to find the latest reply for.
      * @param stream_id Stream id to find the latest reply for.
      * @param args Additional options for the archive.
      */
     explicit archive(const std::string& channel, int32_t stream_id, pybind11::kwargs args);
     /**
-     * @brief
-     * @param recording_id
-     * @param args
+     * @brief Creates an instance of an **archive** for given recording id.
+     * @param recording_id Recording id.
+     * @param args Additional instantiation arguments.
      */
     explicit archive(int64_t recording_id, pybind11::kwargs args);
 
