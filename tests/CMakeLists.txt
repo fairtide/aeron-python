@@ -9,4 +9,5 @@ set_property(TEST run-tests
         ENVIRONMENT "BINARY_DIR=${CMAKE_BINARY_DIR}")
 
 add_custom_target(install-dependencies
+        COMMAND ${PYTHON_EXECUTABLE} -m pip install Cython
         COMMAND ${PYTHON_EXECUTABLE} -m pip install -r ${CMAKE_SOURCE_DIR}/requirements.txt)
