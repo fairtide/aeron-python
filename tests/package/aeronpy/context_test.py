@@ -1,16 +1,19 @@
+import os
 from datetime import datetime
 from time import sleep
 from hamcrest import *
 from pytest import fixture
-from tempfile import mkdtemp
+from tempfile import _get_candidate_names as temp_dir_candidates, tempdir
 from aeronpy import Context
 from aeronpy.driver import media_driver
 
 
 @fixture()
 def aeron_directory():
-    where = mkdtemp(prefix='aeron_dir')
-    with media_driver.launch(aeron_directory_name=aeron_directory):
+    temp_dirs = temp_dir_candidates()
+
+    where = os.path.join(tempdir, next(temp_dirs))
+    with media_driver.launch(aeron_directory_name=where):
         yield where
 
 
