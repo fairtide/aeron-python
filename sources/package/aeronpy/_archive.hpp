@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "_exclusive_publication.hpp"
+#include "_publication.hpp"
 #include "_subscription.hpp"
 
 #include <Aeron.h>
@@ -27,6 +29,63 @@
 
 
 /**
+ * @brief Represents existing Aeron recording.
+ */
+class recording final
+{
+public:
+    /**
+     * @brief Creates an instance of a **recording** with given id.
+     * @param aeron_archive An instance of archive this recording belongs to.
+     * @param id Recording id.
+     */
+    explicit recording(std::shared_ptr<aeron::archive::AeronArchive> aeron_archive, int64_t id);
+
+    /**
+     * @brief Gets id of the recording.
+     * @return Id of the recording.
+     */
+    int64_t id() const;
+    /**
+     * @brief Gets current position in the recording.
+     * @return Current position in the recording.
+     */
+    int64_t position() const;
+
+    /**
+     * @brief Initiates replay from the stream.
+     * @details
+     * Depending on archive configuration this will initiate replay from the local or remote host. Returned subscription
+     * allows consumption of replayed stream. The stream will be delivered on the given **channel** and **stream**.
+     *
+     * @param channel Channel to replay recorded stream on.
+     * @param stream_id Stream to replay the recording as.
+     * @param position Position within the recording to transmi the first replay message from.
+     * @return A subscription allowing consumption of replayed stream.
+     */
+    subscription replay(const std::string& channel, int32_t stream_id, int64_t position);
+    /**
+     * @brief Truncates the recording up to the given position.
+     * @details
+     * This removes all messages before given position from the recording.
+     *
+     * @param position The first position in the modified recording.
+     */
+    void truncate(int64_t position);
+
+    /**
+     * @brief Provides debug description of the recording.
+     * @return Debug description of the recording.
+     */
+    std::string __str__() const;
+
+private:
+    std::shared_ptr<aeron::archive::AeronArchive> aeron_archive_;
+    int64_t id_;
+
+};
+
+/**
  * @brief Provides an interop proxy for interaction with Aeron archive.
  * @details
  * The aeron-archive is an service which enables Aeron data stream recording and replay support from an archive.
@@ -35,39 +94,52 @@ class archive final
 {
 public:
     /**
-     * @brief Creates an instance of an **archive** for the given channel and stream.
-     * @param channel Channel to find the latest reply for.
-     * @param stream_id Stream id to find the latest reply for.
-     * @param args Additional options for the archive.
+     * @brief Creates an instance of an **archive**.
+     * @details
+     * This creates an instance of an **archive** configured according to passed options. Configured archive allows
+     * accessing existing recordings and initiating new ones.
+     *
+     * @param args Configuration options for this archive.
      */
-    explicit archive(const std::string& channel, int32_t stream_id, pybind11::kwargs args);
-    /**
-     * @brief Creates an instance of an **archive** for given recording id.
-     * @param recording_id Recording id.
-     * @param args Additional instantiation arguments.
-     */
-    explicit archive(int64_t recording_id, pybind11::kwargs args);
+    explicit archive(pybind11::kwargs args);
 
     /**
-     * @brief Creates an archive from a recording id.
-     * @param recording_id An identifier of recording to locate.
-     * @param args Additional arguments passed during creation of an archive client.
-     * @return An instance of archive client proxy.
+     * @brief Attempts to get recording associated with the specified id.
+     * @param recording_id The id of recording to look for.
+     * @return On success, recording associated to the id. On failure, None.
      */
-    static archive from_recording_id(int64_t recording_id, pybind11::kwargs args);
-
+    std::unique_ptr<recording> find(int64_t recording_id);
     /**
-     * @brief Initites replay from a stream.
-     * @param channel Channel to reply on.
+     * @brief Attempts to find last recording for given channel and stream.
+     * @param channel Channel for which
      * @param stream_id Stream to reply on.
      * @param position Position to start reply from.
-     * @return An instance of subscription representing replay data
+     * @return On success, latest recording for given channel and stream. On failure, None.
      */
-    subscription replay(const std::string& channel, int32_t stream_id, int64_t position);
+    std::unique_ptr<recording> find_last(const std::string& channel, int32_t stream_id);
+
+    /**
+     * @brief
+     * @param channel
+     * @param stream_id
+     * @return
+     */
+    publication add_recorded_publication(const std::string& channel, int32_t stream_id);
+    /**
+     * @brief
+     * @param channel
+     * @param stream_id
+     * @return
+     */
+    exclusive_publication add_recorded_exclusive_publication(const std::string& channel, int32_t stream_id);
+
+    /**
+     * @brief Provides debug description of the archive.
+     * @return Debug description of the archive.
+     */
+    std::string __str__() const;
 
 private:
-    archive(pybind11::kwargs& args);
-
     int64_t find_latest_recording_id(const std::string& channel, int32_t streamId);
 
     int64_t recording_id_;
