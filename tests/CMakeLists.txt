@@ -1,5 +1,5 @@
 add_test(NAME run-tests
-        COMMAND ${PYTHON_EXECUTABLE} -m pytest ${CMAKE_CURRENT_SOURCE_DIR} --junitxml=run-tests.xml)
+        COMMAND ${PYTHON_EXECUTABLE} -m pytest ${CMAKE_CURRENT_SOURCE_DIR} --junitxml=run-tests.xml -d -n1)
 
 set_property(TEST run-tests
         PROPERTY
