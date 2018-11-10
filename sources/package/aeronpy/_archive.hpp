@@ -119,17 +119,25 @@ public:
     std::unique_ptr<recording> find_last(const std::string& channel, int32_t stream_id);
 
     /**
-     * @brief
-     * @param channel
-     * @param stream_id
-     * @return
+     * @brief Adds a publication with automatic archive recording.
+     * @details
+     * This creates a publication in a similar way to **context::add_publication** wit automatic registration of
+     * stream recording. Multiple publications share the same session.
+     *
+     * @param channel Channel to open the publication on.
+     * @param stream_id Stream to open the publication on.
+     * @return An instance of publisher through which data can be offered to the stream.
      */
     publication add_recorded_publication(const std::string& channel, int32_t stream_id);
     /**
-     * @brief
-     * @param channel
-     * @param stream_id
-     * @return
+     * @brief Adds an exclusive publication with automatic recording.
+     * @details
+     * This method behaves indetically to **context::add_exclusive_publication**, with addional registration
+     * of stream recording. Each publication will have its unique session.
+     *
+     * @param channel Channel to open the publication on.
+     * @param stream_id Stream to open the publication on.
+     * @return An instance of publisher through which data can be offered to the stream.
      */
     exclusive_publication add_recorded_exclusive_publication(const std::string& channel, int32_t stream_id);
 

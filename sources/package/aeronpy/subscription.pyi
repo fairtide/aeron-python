@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from typing import Callable, List, NoReturn, Union
-from .data import
+from .data import Header, Image
 
 
 class Subscription:

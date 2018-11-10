@@ -23,7 +23,7 @@
 
 
 /**
- * @brief
+ * @brief Represents interop proxy for Aeron exclusive publication.
  */
 class exclusive_publication final
 {
