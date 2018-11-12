@@ -39,6 +39,9 @@ def test__archive_add_recorded_publication(aeron_directory):
     assert_that(recording, is_(None))
 
     publication = archive.add_recorded_publication('aeron:ipc', 5000)
+
+    sleep(0.5)
+
     recording = archive.find_last('aeron:ipc', 5000)
     assert_that(recording, is_not(None))
     assert_that(recording.id, is_(equal_to(0)))
@@ -47,6 +50,7 @@ def test__archive_add_recorded_publication(aeron_directory):
     assert_that(result, is_(greater_than(0)))
 
     sleep(0.5)
+
     assert_that(recording.position, is_(equal_to(result)))
 
 
@@ -56,6 +60,9 @@ def test__archive_add_recorded_exclusive_publication(aeron_directory):
     assert_that(recording, is_(None))
 
     publication = archive.add_recorded_exclusive_publication('aeron:ipc', 5000)
+
+    sleep(0.5)
+
     recording = archive.find_last('aeron:ipc', 5000)
     assert_that(recording, is_not(None))
     assert_that(recording.id, is_(equal_to(0)))
@@ -64,13 +71,13 @@ def test__archive_add_recorded_exclusive_publication(aeron_directory):
     assert_that(result, is_(greater_than(0)))
 
     sleep(0.5)
+
     assert_that(recording.position, is_(equal_to(result)))
 
 
 def test__recording_find(aeron_directory):
     archive = Archive(aeron_dir=aeron_directory, aeron_archive_dir=aeron_directory)
     publication = archive.add_recorded_publication('aeron:ipc', 5000)
-
     sleep(0.5)
 
     recording = archive.find(0)
@@ -86,6 +93,8 @@ def test__recording_replay(aeron_directory):
 
     offer_result = publication.offer(b'def')
     assert_that(offer_result, is_(greater_than(0)))
+
+    sleep(0.5)
 
     recording = archive.find_last('aeron:ipc', 5000)
     subscription = recording.replay('aeron:ipc', 6000)
