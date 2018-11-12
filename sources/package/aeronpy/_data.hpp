@@ -28,31 +28,33 @@ class image final
 {
 public:
     /**
-     * @brief
-     * @param self
-     * @return
+     * @brief Gets session id.
+     * @param self An instance of **aeron::Image**.
+     * @return Session id associated with the image.
      */
     static int32_t session_id(aeron::Image& self);
     /**
-     * @brief
-     * @param self
-     * @return
+     * @brief Indicates if stream related to the image ended.
+     * @param self An instance of **aeron::Image**.
+     * @return True if stream ended, false otherwise.
      */
     static bool is_end_of_stream(aeron::Image& self);
     /**
-     * @brief
-     * @param self
-     * @return
+     * @brief Indicates if the image is closed.
+     * @param self An instance of **aeron::Image**.
+     * @return True if image is closed, false otherwise.
      */
     static bool is_closed(aeron::Image& self);
     /**
-     * @brief
+     * @brief Closes the image and it's session.
+     * @param self An instance of **aeron::Image**.
      */
     static void close(aeron::Image& self);
 
     /**
-     * @brief
-     * @return
+     * @brief Produces debug textual representation of the image.
+     * @param self An instance of **aeron::Image**.
+     * @return Debug textual representation of the image.
      */
     static std::string __str__(aeron::Image& self);
 
@@ -65,21 +67,22 @@ class header final
 {
 public:
     /**
-     * @brief
-     * @param self
-     * @return
+     * @brief Gets stream id.
+     * @param self An instance of **aeron::Header** this method will be affixed to.
+     * @return Stream id.
      */
     static int32_t stream_id(aeron::Header& self);
     /**
-     * @brief
-     * @return
+     * @brief Gets session id.
+     * @param self An instance of **aeron::Header** this method will be affixed to.
+     * @return Session id.
      */
     static int32_t session_id(aeron::Header& self);
 
     /**
-     * @brief
-     * @param self
-     * @return
+     * @brief Produces debug textual representation of the header.
+     * @param self An instance of **aeron::Header** this method will be affixed to.
+     * @return Debug textual representation of the header.
      */
     static std::string __str__(aeron::Header& self);
 

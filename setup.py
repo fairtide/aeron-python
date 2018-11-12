@@ -102,6 +102,10 @@ class PackageInfo(object):
         return self.__fields['Author-email']
 
     @property
+    def home_page(self):
+        return self.__fields['Home-page']
+
+    @property
     def license(self):
         return self.__fields['License']
 
@@ -112,14 +116,12 @@ setup(
     version=info.version,
     author=info.author,
     author_email=info.author_email,
+    url=info.home_page,
     license=info.license,
     description='Python bindings for Aeron',
     long_description='',
     ext_modules=[CMakeExtension('aeronpy')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
-    python_requires='>=3.6.*',
-    install_requires=[
-        'setuptools >= 40.0'
-    ],
+    python_requires='>=3.6.*'
 )
