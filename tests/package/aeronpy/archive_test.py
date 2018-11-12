@@ -140,7 +140,3 @@ def test__recording_replay__from_position__not_aligned(aeron_directory):
 
     recording = archive.find_last('aeron:ipc', 5000)
     assert_that(calling(recording.replay).with_args('aeron:ipc', 6000, 50), raises(RuntimeError))
-
-
-
-# TODO: add replay tests
