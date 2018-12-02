@@ -16,59 +16,67 @@ matrix:
   - os: linux
     dist: trusty
     sudo: false
-    env: CC_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0
+    env: CC_COMPILER=clang-4.0 CXX_COMPILER=clang++-4.0 PYTHON_VERSION=3.6
     addons:
       apt:
         update: true
         sources:
         - ubuntu-toolchain-r-test
         - llvm-toolchain-trusty-4.0
+        - deadsnakes
         packages:
         - clang-4.0
         - libstdc++-6-dev
+        - python3.6-dev
         - ninja-build
 
   - os: linux
     dist: trusty
     sudo: false
-    env: CC_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0
+    env: CC_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 PYTHON_VERSION=3.6
     addons:
       apt:
         update: true
         sources:
         - ubuntu-toolchain-r-test
         - llvm-toolchain-trusty-5.0
+        - deadsnakes
         packages:
         - clang-5.0
         - libstdc++-6-dev
+        - python3.6-dev
         - ninja-build
 
   - os: linux
     dist: trusty
     sudo: false
-    env: CC_COMPILER=gcc-6 CXX_COMPILER=g++-6 CODECOV=no
+    env: CC_COMPILER=gcc-6 CXX_COMPILER=g++-6 CODECOV=no PYTHON_VERSION=3.6
     addons:
       apt:
         update: true
         sources:
         - ubuntu-toolchain-r-test
+        - deadsnakes
         packages:
         - g++-6
         - ninja-build
+        - python3.6-dev
         - lcov
 
   - os: linux
     dist: trusty
     sudo: false
-    env: CC_COMPILER=gcc-7 CXX_COMPILER=g++-7 CODECOV=yes
+    env: CC_COMPILER=gcc-7 CXX_COMPILER=g++-7 CODECOV=yes PYTHON_VERSION=3.6
     addons:
       apt:
         update: true
         sources:
         - ubuntu-toolchain-r-test
+        - deadsnakes
         packages:
         - g++-7
         - ninja-build
+        - python3.6-dev
         - lcov
 
   - os: osx
@@ -123,7 +131,22 @@ install:
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew install boost
       brew install ninja
+      brew upgrade python
     fi
+  # Install Python packages through pip
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      export PYTHON_EXECUTABLE="/usr/local/bin/python${PYTHON}"
+    else
+      export PYTHON_EXECUTABLE="/usr/bin/python${PYTHON}"
+    fi
+
+    export CMAKE_OPTIONS=${CMAKE_OPTIONS}" -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
+
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    ${PYTHON_EXECUTABLE} get-pip.py --user
+    ${PYTHON_EXECUTABLE} -m pip install Cython
+    ${PYTHON_EXECUTABLE} -m pip install --user -r tests/python/requirements.txt
   # Setup code coverage for GCC builds
   - |
     if [[ "${CODECOV}" == "yes" ]]; then
