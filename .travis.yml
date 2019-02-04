@@ -106,9 +106,9 @@ install:
   # Install Python packages through pip
   - |
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      export PYTHON_EXECUTABLE="/usr/local/bin/python${PYTHON}"
+      export PYTHON_EXECUTABLE="/usr/local/bin/python${PYTHON_VERSION}"
     else
-      export PYTHON_EXECUTABLE="/usr/bin/python${PYTHON}"
+      export PYTHON_EXECUTABLE="/usr/bin/python${PYTHON_VERSION}"
     fi
 
     export CMAKE_OPTIONS=${CMAKE_OPTIONS}" -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
