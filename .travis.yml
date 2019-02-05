@@ -2,6 +2,9 @@ language: cpp
 
 env:
   global:
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    - BOOST_VERSION=1.65.1
+    - BOOST_URL="https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz"
     - CODECOV=no
 
 cache:
@@ -88,6 +91,32 @@ before_install:
     fi
 
 install:
+  # Download and install Boost
+  - |
+    if [[ ${TRAVIS_OS_NAME} == "linux" && ${BOOST_VERSION} != "default" ]]; then
+      if [ ! -f "${DEPS_DIR}/boost/${BOOST_VERSION}_cached" ]; then
+        # create dirs for source and install
+        mkdir -p ${DEPS_DIR}/boost${BOOST_VERSION}
+        mkdir -p ${DEPS_DIR}/boost
+        rm -rf ${DEPS_DIR}/boost/*
+
+        # download
+        travis_retry wget --no-check-certificate --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${DEPS_DIR}/boost${BOOST_VERSION}
+        pushd ${DEPS_DIR}/boost${BOOST_VERSION}
+
+        # configure and install
+        if [ "$CXX" = "${CXX_COMPILER}" ]; then echo "using cc : ${CC_COMPILER} : ${CXX_COMPILER} ;" > $HOME/user-config.jam; fi
+        ./bootstrap.sh --prefix=${DEPS_DIR}/boost/ --with-libraries=system,program_options,date_time,filesystem,regex,log
+        ./b2 -j 4 -d0 install
+        popd
+        rm -rf ${DEPS_DIR}/boost/include/boost/{compute,compute.hpp}
+        touch ${DEPS_DIR}/boost/${BOOST_VERSION}_cached
+      else
+        echo "Using cached Boost ${BOOST_VERSION} libraries."
+      fi
+
+      export CMAKE_OPTIONS=${CMAKE_OPTIONS}" -DBOOST_ROOT=${DEPS_DIR}/boost"
+    fi
   # Setup compilers
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -100,6 +129,7 @@ install:
   # Update references on OSX
   - |
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install boost
       brew install ninja
       brew upgrade python
     fi
