@@ -16,6 +16,7 @@
 
 #include "_subscription.hpp"
 
+#include <functional>
 #include <fmt/format.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
@@ -26,12 +27,14 @@ using namespace aeron;
 using namespace fmt;
 namespace py = pybind11;
 
+/*
+const std::function<aeron::ControlledPollAction(aeron::concurrent::AtomicBuffer&, int, int, aeron::concurrent::logbuffer::Header&)>&
+subscription::subscription(std::shared_ptr<aeron::Subscription>)::<lambda(aeron::concurrent::AtomicBuffer&, aeron::util::index_t, aeron::util::index_t, aeron::concurrent::logbuffer::Header&)>
 
+ */
 subscription::subscription(shared_ptr<Subscription> aeron_subscription)
-    :
-        aeron_subscription_(aeron_subscription)
+    : aeron_subscription_(aeron_subscription)
 {
-
 }
 
 const string& subscription::channel() const
@@ -60,26 +63,42 @@ vector<Image> subscription::images() const
     return *aeron_subscription_->images();
 }
 
-int subscription::poll(py::function handler, int fragment_limit)
+void subscription::init_fragment_assembler()
 {
-    return aeron_subscription_->poll(
-            [&, this](auto& buffer, auto offset, auto length, auto& header)
+    if (!fragmentAssembler_)
+    {
+        fragmentAssembler_ = make_unique<ControlledFragmentAssembler>(
+            [this](AtomicBuffer& buffer,
+                   index_t offset,
+                   index_t length,
+                   Header& header)
             {
                 py::gil_scoped_acquire gil_guard;
 
                 auto data_info = py::buffer_info(
-                        buffer.buffer() + offset,
-                        sizeof(uint8_t),
-                        py::format_descriptor<uint8_t>::format(),
-                        length);
+                    buffer.buffer() + offset,
+                    sizeof(uint8_t),
+                    pybind11::format_descriptor<uint8_t>::format(),
+                    length);
 
-                if (is_complete_poll_handler(handler)) // expected performance hit
-                    handler(py::memoryview(data_info), header);
-                else
-                    handler(py::memoryview(data_info));
-            },
-            fragment_limit);
+                pybind11::memoryview memview = py::memoryview(data_info);
+
+                py_func_handler(memview);
+
+                return ControlledPollAction::CONTINUE;
+            });
+    }
 }
+
+int subscription::poll(py::function handler, int fragment_limit)
+{
+    py_func_handler = handler;
+
+    init_fragment_assembler();
+
+    return aeron_subscription_->poll(fragmentAssembler_->handler(), fragment_limit);
+}
+
 
 int subscription::poll_eos(py::object handler)
 {
@@ -104,19 +123,6 @@ string subscription::__str__() const
             aeron_subscription_->streamId());
 }
 
-bool subscription::is_complete_poll_handler(py::function& handler)
-{
-    static constexpr auto inspect_module = "inspect";
-    static constexpr auto signature_attribute = "signature";
-    static constexpr auto parameters_attribute = "parameters";
-
-    auto inspect = py::module::import(inspect_module);
-    auto signature_func = inspect.attr(signature_attribute);
-    auto signature = signature_func(handler);
-
-    return py::len(signature.attr(parameters_attribute)) > 1u;
-}
-
 PYBIND11_MODULE(_subscription, m)
 {
     static constexpr auto default_fragment_limit = 10;
@@ -138,7 +144,3 @@ PYBIND11_MODULE(_subscription, m)
             .def("__str__", &subscription::__str__);
 
 }
-
-
-
-
