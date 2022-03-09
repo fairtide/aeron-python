@@ -24,20 +24,16 @@ find_package(Boost COMPONENTS system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # find python
-find_package(PythonInterp ${PYTHON_VERSION})
-find_package(PythonLibs ${PYTHON_VERSION})
+find_package(Python 3.9...<3.10 COMPONENTS Interpreter Development)
 
-if (PYTHONINTERP_FOUND)
-    message(STATUS "Found Python interpreter: ${PYTHON_VERSION_STRING}")
+if (PYTHON_FOUND)
+    message(STATUS "Found Python interpreter: ${PYTHON_VERSION}")
 else ()
     message(FATAL_ERROR "Python not found!")
 endif ()
 
-if (PYTHONLIBS_FOUND)
-    message(STATUS "Found Python libs: ${PYTHONLIBS_VERSION_STRING} in ${PYTHON_LIBRARIES}")
-else ()
-    message(FATAL_ERROR "Python dev libs not found!")
-endif ()
+include_directories(${Python_INCLUDE_DIRS})
+message(STATUS "Python include path: " ${Python_INCLUDE_DIRS})
 
 # setup CMake to run tests
 enable_testing()
@@ -69,5 +65,5 @@ add_custom_target(build-wheel
                 CMAKE=${CMAKE_COMMAND}
                 CC=${CMAKE_C_COMPILER}
                 CXX=${CMAKE_CXX_COMPILER}
-                    ${PYTHON_EXECUTABLE} setup.py bdist_wheel -d ${CMAKE_BINARY_DIR} -b ${CMAKE_BINARY_DIR}/wheel_build
+                    ${Python_EXECUTABLE} setup.py bdist_wheel -d ${CMAKE_BINARY_DIR} -b ${CMAKE_BINARY_DIR}/wheel_build
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")

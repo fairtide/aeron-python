@@ -81,17 +81,6 @@ int subscription::poll(py::function handler, int fragment_limit)
             fragment_limit);
 }
 
-int subscription::poll_eos(py::object handler)
-{
-    return aeron_subscription_->pollEndOfStreams([&](auto& image)
-    {
-        py::gil_scoped_acquire gil_guard;
-
-        if (handler)
-            handler(image);
-    });
-}
-
 bool subscription::__bool__() const
 {
     return aeron_subscription_ && aeron_subscription_->isConnected();
@@ -130,9 +119,6 @@ PYBIND11_MODULE(_subscription, m)
             .def("poll", &subscription::poll,
                     py::arg("handler"),
                     py::arg("fragment_limit") = default_fragment_limit,
-                    py::call_guard<py::gil_scoped_release>())
-            .def("poll_eos", &subscription::poll_eos,
-                    py::arg("handler") = py::none(),
                     py::call_guard<py::gil_scoped_release>())
             .def("__bool__", &subscription::__bool__)
             .def("__str__", &subscription::__str__);

@@ -73,11 +73,6 @@ public:
      * @return
      */
     int poll(pybind11::function handler, int fragment_limit);
-    /**
-     * @brief
-     * @return
-     */
-    int poll_eos(pybind11::object handler);
 
     /**
      * @brief
