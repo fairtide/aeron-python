@@ -22,10 +22,10 @@ def main():
         subscription = context.add_subscription(args.channel, args.stream_id)
         while True:
             fragments_read = subscription.poll(lambda data: print(bytes(data)))
-            if fragments_read == 0:
-                eos_count = subscription.poll_eos(lambda *args: print(f'end of stream: {args}'))
-                if eos_count > 0:
-                    break
+            #if fragments_read == 0:
+            #    eos_count = subscription.poll_eos(lambda *args: print(f'end of stream: {args}'))
+            #    if eos_count > 0:
+            #        break
 
             sleep(0.1)
 
