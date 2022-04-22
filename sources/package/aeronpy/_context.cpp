@@ -209,21 +209,6 @@ publication context::add_publication(const string& channel, int32_t stream_id)
     return publication;
 }
 
-exclusive_publication context::add_exclusive_publication(const std::string &channel, int32_t stream_id)
-{
-    auto id = aeron_instance_->addExclusivePublication(channel, stream_id);
-    auto publication = aeron_instance_->findExclusivePublication(id);
-
-    // wait for the subscription to be valid
-    while (!publication)
-    {
-        std::this_thread::yield();
-        publication = aeron_instance_->findExclusivePublication(id);
-    }
-
-    return publication;
-}
-
 PYBIND11_MODULE(_context, m)
 {
     py::class_<context>(m, "Context")
@@ -237,12 +222,12 @@ PYBIND11_MODULE(_context, m)
                     py::arg("channel"),
                     py::arg("stream_id"),
                     py::call_guard<py::gil_scoped_release>(),
-                    py::keep_alive<0, 1>())
-            .def("add_exclusive_publication", &context::add_exclusive_publication,
-                 py::arg("channel"),
-                 py::arg("stream_id"),
-                 py::call_guard<py::gil_scoped_release>(),
-                 py::keep_alive<0, 1>());
+                    py::keep_alive<0, 1>());
+            //.def("add_exclusive_publication", &context::add_exclusive_publication,
+            //     py::arg("channel"),
+            //     py::arg("stream_id"),
+            //     py::call_guard<py::gil_scoped_release>(),
+            //     py::keep_alive<0, 1>());
 
 }
 

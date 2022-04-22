@@ -28,7 +28,7 @@ class Context:
                  user_conductor_agent_invoker: bool=False,
                  error_handler: Callable[[Exception], NoReturn]=None,
                  new_publication_handler: Callable[[str, int, int, int], NoReturn]=None,
-                 new_exclusive_publication_handler: Callable[[str, int, int, int], NoReturn]=None,
+                 #new_exclusive_publication_handler: Callable[[str, int, int, int], NoReturn]=None,
                  new_subscription_handler: Callable[[str, int, int], NoReturn]=None,
                  available_image_handler: Callable[[Image], NoReturn]=None,
                  unavailable_image_handler: Callable[[Image], NoReturn]=None,

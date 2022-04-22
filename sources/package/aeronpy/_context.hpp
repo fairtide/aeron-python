@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "_exclusive_publication.hpp"
 #include "_publication.hpp"
 #include "_subscription.hpp"
 
@@ -64,7 +63,7 @@ public:
      * @param stream_id Id of stream this publication should be on.
      * @return An interop proxy for added publication.
      */
-    exclusive_publication add_exclusive_publication(const std::string& channel, int32_t stream_id);
+    //exclusive_publication add_exclusive_publication(const std::string& channel, int32_t stream_id);
 
 private:
     aeron::Context aeron_context_;

@@ -151,13 +151,6 @@ def test_poll__multiple_sessions(aeron_directory, ipc_publication_1, ipc_publica
     assert_that(received, has_length(2))
 
 
-def test_poll_eos__no_data(aeron_directory, ipc_publication, stream_id):
-    context = Context(aeron_dir=aeron_directory)
-    subscription = context.add_subscription('aeron:ipc', stream_id)
-    result = subscription.poll_eos()
-    assert_that(result, is_(0))
-
-
 # def test_poll_eos__single_image(aeron_directory):
 #     context = Context(aeron_dir=aeron_directory)
 #     subscription = context.add_subscription('aeron:udp?endpoint=localhost:40456|ttl=0', 199)
