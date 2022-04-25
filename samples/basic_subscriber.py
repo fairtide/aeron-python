@@ -1,5 +1,6 @@
 import sys
 from argparse import ArgumentParser, ArgumentError
+from time import sleep
 
 import aeronpy
 import numpy as np
@@ -41,10 +42,10 @@ def main():
         while True:
             fragments_read = subscription.poll(process_data)
 
-            if fragments_read == 0:
+            #if fragments_read == 0:
                 #eos_count = subscription.poll_eos(lambda *args: print(f'end of stream: {args}'))
                 #if eos_count > 0:
-                break
+            #    break
 
         print("Messages %d total bytes %d, bytes per message %f" % (messages, count, count / messages))
         print("Printing the ids of the messages with a received count !=1"
