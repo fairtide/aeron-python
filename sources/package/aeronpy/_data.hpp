@@ -86,4 +86,5 @@ public:
      */
     static std::string __str__(aeron::Header& self);
 
+    static uint8_t flags(aeron::Header& self);
 };
